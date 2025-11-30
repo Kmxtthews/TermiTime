@@ -23,6 +23,12 @@ namespace TermiTime
         /// </summary>
         static void Main(string[] args)
         {
+
+            ConsoleHelper.DisableResizing();        // ← Locks resizing completely
+            Console.SetWindowSize(96, 30);          // Exact width your art needs
+            Console.SetBufferSize(96, 30);          // Removes scrollbars
+            Console.CursorVisible = false;          // Optional: hides blinking cursor
+
             Console.Title = "TermiTime";
             ConfigureConsole();
 
@@ -160,8 +166,8 @@ namespace TermiTime
             {
                 // Minimize then resize to avoid scrollbars and ensure proper layout
                 Console.SetWindowSize(1, 1);
-                Console.SetBufferSize(TitleSize.width, 60);
-                Console.SetWindowSize(TitleSize.width, 60);
+                Console.SetBufferSize(TitleSize.width, 35); // Windows only
+                Console.SetWindowSize(TitleSize.width, 35);
             }
             catch (ArgumentOutOfRangeException)
             {
@@ -190,7 +196,7 @@ namespace TermiTime
 
         /// <summary>
         /// Displays the static ASCII title without animation
-        /// Not used currently because of hidden /a sound effects
+        /// Not used rn
         /// </summary>
         /// 
 
