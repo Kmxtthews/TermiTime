@@ -7,16 +7,16 @@
       "RelativeMoniker": "D:0:0:{B7F4DF9D-6935-44A4-8BB8-C94A25F0859F}|Main\\Main.csproj|solutionrelative:main\\core.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{B7F4DF9D-6935-44A4-8BB8-C94A25F0859F}|Main\\Main.csproj|c:\\users\\kadem\\source\\repos\\individual\\termitime\\termitime\\main\\consolehelper.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{B7F4DF9D-6935-44A4-8BB8-C94A25F0859F}|Main\\Main.csproj|solutionrelative:main\\consolehelper.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{B7F4DF9D-6935-44A4-8BB8-C94A25F0859F}|Main\\Main.csproj|c:\\users\\kadem\\source\\repos\\individual\\termitime\\termitime\\main\\helper.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{B7F4DF9D-6935-44A4-8BB8-C94A25F0859F}|Main\\Main.csproj|solutionrelative:main\\helper.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{B7F4DF9D-6935-44A4-8BB8-C94A25F0859F}|Main\\Main.csproj|c:\\users\\kadem\\source\\repos\\individual\\termitime\\termitime\\main\\users.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{B7F4DF9D-6935-44A4-8BB8-C94A25F0859F}|Main\\Main.csproj|solutionrelative:main\\users.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{B7F4DF9D-6935-44A4-8BB8-C94A25F0859F}|Main\\Main.csproj|c:\\users\\kadem\\source\\repos\\individual\\termitime\\termitime\\main\\helper.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{B7F4DF9D-6935-44A4-8BB8-C94A25F0859F}|Main\\Main.csproj|solutionrelative:main\\helper.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{B7F4DF9D-6935-44A4-8BB8-C94A25F0859F}|Main\\Main.csproj|c:\\users\\kadem\\source\\repos\\individual\\termitime\\termitime\\main\\consolehelper.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{B7F4DF9D-6935-44A4-8BB8-C94A25F0859F}|Main\\Main.csproj|solutionrelative:main\\consolehelper.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     }
   ],
   "DocumentGroupContainers": [
@@ -26,8 +26,12 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 0,
+          "SelectedChildIndex": 1,
           "Children": [
+            {
+              "$type": "Bookmark",
+              "Name": "ST:0:0:{aa2115a1-9712-457b-9047-dbb71ca2cdd2}"
+            },
             {
               "$type": "Document",
               "DocumentIndex": 0,
@@ -36,7 +40,7 @@
               "RelativeDocumentMoniker": "Main\\Core.cs",
               "ToolTip": "C:\\Users\\kadem\\source\\repos\\Individual\\TermiTime\\TermiTime\\Main\\Core.cs*",
               "RelativeToolTip": "Main\\Core.cs*",
-              "ViewState": "AgIAAE0AAAAAAAAAAADgv18AAAAkAAAAAAAAAA==",
+              "ViewState": "AgIAABEAAAAAAAAAAAA0wE8AAAA1AAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2025-11-30T03:29:02.51Z",
               "EditorCaption": ""
@@ -49,18 +53,14 @@
               "RelativeDocumentMoniker": "Main\\Users.cs",
               "ToolTip": "C:\\Users\\kadem\\source\\repos\\Individual\\TermiTime\\TermiTime\\Main\\Users.cs",
               "RelativeToolTip": "Main\\Users.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAoAAAAYAAAAAAAAAA==",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAACAAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2025-11-30T03:29:05.136Z",
               "EditorCaption": ""
             },
             {
-              "$type": "Bookmark",
-              "Name": "ST:0:0:{aa2115a1-9712-457b-9047-dbb71ca2cdd2}"
-            },
-            {
               "$type": "Document",
-              "DocumentIndex": 1,
+              "DocumentIndex": 3,
               "Title": "ConsoleHelper.cs",
               "DocumentMoniker": "C:\\Users\\kadem\\source\\repos\\Individual\\TermiTime\\TermiTime\\Main\\ConsoleHelper.cs",
               "RelativeDocumentMoniker": "Main\\ConsoleHelper.cs",
@@ -73,13 +73,13 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 3,
+              "DocumentIndex": 1,
               "Title": "Helper.cs",
               "DocumentMoniker": "C:\\Users\\kadem\\source\\repos\\Individual\\TermiTime\\TermiTime\\Main\\Helper.cs",
               "RelativeDocumentMoniker": "Main\\Helper.cs",
-              "ToolTip": "C:\\Users\\kadem\\source\\repos\\Individual\\TermiTime\\TermiTime\\Main\\Helper.cs",
-              "RelativeToolTip": "Main\\Helper.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAABYAAAA5AAAAAAAAAA==",
+              "ToolTip": "C:\\Users\\kadem\\source\\repos\\Individual\\TermiTime\\TermiTime\\Main\\Helper.cs*",
+              "RelativeToolTip": "Main\\Helper.cs*",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAACEAAAArAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2025-11-30T03:40:51.847Z",
               "EditorCaption": ""

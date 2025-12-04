@@ -10,18 +10,24 @@ namespace Main
 {
     internal class Users
     {
-        private string username;
-        private string password;
+        public string? Username { get; set; }
+        public string? Password { get; set; }
+        public  DateTime CreationDate { get; set; }
+        public List<String> Entries { get; set; }
 
-        public Users(string username_, string password_)
+        // This is the one System.Text.Json will use
+        public Users() { }
+
+        public Users(string Username_, string Password_)
         {
-            this.username = username_;
-            this.password = password_;
+            Username = Username_;
+            Password = Password_;
+            CreationDate = DateTime.UtcNow;
         }
 
         public string GetCredentials()
         {
-            return ($"Username={this.username}Password={this.password}");
+            return ($"Username={Username}Password={Password}");
         }
     }
 }

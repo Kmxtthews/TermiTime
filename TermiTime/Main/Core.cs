@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Numerics;
 using System.Text.Json;
+using System.Text.Json.Serialization;
 using System.Threading;
 using System.Xml;
 
@@ -15,6 +16,7 @@ namespace TermiTime
         // ASCII art title banner
         const string TitleString = " ______   ______     ______     __    __     __     ______   __     __    __     ______   \r\n/\\__  _\\ /\\  ___\\   /\\  == \\   /\\ \"-./  \\   /\\ \\   /\\__  _\\ /\\ \\   /\\ \"-./  \\   /\\  ___\\  \r\n\\/_/\\ \\/ \\ \\  __\\   \\ \\  __<   \\ \\ \\-./\\ \\  \\ \\ \\  \\/_/\\ \\/ \\ \\ \\  \\ \\ \\-./\\ \\  \\ \\  __\\  \r\n   \\ \\_\\  \\ \\_____\\  \\ \\_\\ \\_\\  \\ \\_\\ \\ \\_\\  \\ \\_\\    \\ \\_\\  \\ \\_\\  \\ \\_\\ \\ \\_\\  \\ \\_____\\\r\n    \\/_/   \\/_____/   \\/_/ /_/   \\/_/  \\/_/   \\/_/     \\/_/   \\/_/   \\/_/  \\/_/   \\/_____/";
         private static readonly (int width, int height) TitleSize = (90, 6);    // Dimensions of the title banner (used for console sizing)
+        
 
         // Controls whether the title animation has a delay (useful for debugging)
         private static bool SkipLoadTime { get; set; } = true;
@@ -47,7 +49,6 @@ namespace TermiTime
 
                 if (input == "y" || input == "yes")
                 {
-                    unanswered = false;
                     HandleNewUser();
                 }
                 else if (input == "n" || input == "no")
@@ -64,15 +65,74 @@ namespace TermiTime
             }
         }
 
+        /// <summary>
+        /// Where I associate entries written by users to their list<string> entry field
+        /// <summary>
+        private static void SaveEntry(string content)
+        {
+            File.AppendAllText("entries.txt", content + Environment.NewLine);
+
+            // Add entry to user's entry field
+            Users OurUser = Helper.Globals.CachedUser;
+            OurUser.Entries.Add(content);
+        }
+
+
+        /// <summary>
+        /// Where users create new entries
+        /// <summary>
+        private static void CreateEntry()
+        {
+            ClearConsole();
+            DisplayTitleAnimation();
+
+            Console.WriteLine("\nThis is an entry, please type below.");
+            Console.Write("\nEntry: ");
+            string? entryContent = Console.ReadLine()?.Trim();
+
+            Console.WriteLine("\nEntry saved! Press Enter to return to dashboard...");
+            Console.ReadLine();
+
+            SaveEntry(entryContent);
+
+            // Return to dashboard using cached user object
+            userDashboard(Helper.Globals.CachedUser);
+
+        }
+
 
         /// <summary>
         /// Displays user dashboard according to credentials
         /// </summary>
-        private static void userDashboard(Users user)
+        private static void userDashboard(Users? user)
         {
             ClearConsole();
             DisplayTitleAnimation();
-            Console.WriteLine(user.GetCredentials());
+
+            Helper.Globals.CachedUser = user!; // No need to serialize again, cached for session use
+
+            bool inputLoop = true;
+
+            while (inputLoop)
+            {
+                Console.WriteLine($"\n\nWelcome back {user?.Username}!\nPlease select one of the following.");
+                Console.WriteLine("\n1. Create Entry\n2. View Entrys\n3. View Profile");
+
+                string? input = Console.ReadLine()?.Trim();
+
+                switch (input)
+                {
+                    case "1":
+                        CreateEntry();
+                        break;
+                    case "2":
+                        // View Entrys
+                        break;
+                    case "3":
+                        // View Profile
+                        break;
+                }
+            }
         }
 
 
@@ -86,26 +146,77 @@ namespace TermiTime
             Console.WriteLine("\nWelcome back!\nPlease enter your username...");
             Console.Write("Username :");
 
-            string? username = Console.ReadLine();
+            string? username = Console.ReadLine()?.Trim();
 
             Console.WriteLine("\nNow enter your password!");
             Console.Write("Password :");
 
-            string? password = Console.ReadLine();
+            string? password = Console.ReadLine()?.Trim();
+            string userCheck = CheckForExistingUser(username);
 
-            // Query saved user data
-            // To be continued...
+            if (userCheck == "User already exists, account creation declined.")
+            {
+                // Account exists, check if password matches.
+
+                string[] lines = File.ReadAllLines("user_data.json");
+
+                foreach (string s in lines)
+                {
+
+                    Users? possibleUser = JsonSerializer.Deserialize<Users>(s);
+
+                    // Safer to deserialize first, then compare fields
+
+                    if (possibleUser?.Username == username && possibleUser?.Password == password)
+                    {
+                        try
+                        {
+                            Console.WriteLine("\nLogin successful! Press Enter to continue...");
+                            userDashboard(possibleUser);
+                            return;
+                        }
+                        catch (JsonException ex)
+                        {
+                            Console.WriteLine($"An error occurred while accessing user data: {ex.Message}");
+                        }
+                        catch (Exception ex)
+                        {
+                            Console.WriteLine($"An error occurred while accessing user data: {ex.Message}");
+                        }
+                    }
+                }
+
+                Console.WriteLine("\nIncorrect password or username. Restarting login process, press enter....");
+                Console.ReadLine();
+                Main(new string[] { });
+            }
         }
 
         /// <summary>
         /// Checks registered users for matching credentials
         /// </summary>
-        private static string CheckForExistingUser(string? username, string? password)
+        private static string CheckForExistingUser(string? username)
         {
             // Check if input is not null
-            if ((username is not null) && (password is not null))
+            if ((username is not null))
             {
-                return "test";
+                try
+                {
+                    string[] lines = File.ReadAllLines("user_data.json");
+
+                    foreach (string s in lines)
+                    {
+                        if (s.Contains(username))
+                        {
+                            return "User already exists, account creation declined.";
+                        }
+                    }
+                    return "User not found.";
+                }
+                catch (Exception ex)
+                {
+                    return $"An error occurred while accessing user data: {ex.Message}";
+                }                
             } 
             else
             {
@@ -123,17 +234,31 @@ namespace TermiTime
 
             ClearConsole();
             DisplayTitleAnimation();
-            Console.WriteLine($"\nAccount created successfully!\nWelcome, {username}!\nLogging you in now...\nPress Enter to continue...");
+            Console.WriteLine($"\nWelcome, {username}!\nJust checking some things...\nPress Enter to continue...");
             Console.ReadLine();
 
-            //CheckForExistingUser(username, password);
+            string userCheck = CheckForExistingUser(username);
 
-            var currentUser = new Users(username, password);
-            var options = new JsonSerializerOptions { WriteIndented = true };
-            string jsonString = JsonSerializer.Serialize(currentUser, options);
-            File.WriteAllText("user_data.json", jsonString);
-            Console.WriteLine("Done test%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%");
-            //userDashboard(currentUser);
+            if (userCheck == "User not found.")
+            {
+                //var options = new JsonSerializerOptions { WriteIndented = true }; // Pretty print option, not used here
+                Users currentUser = new Users(username, password);
+                string jsonString = JsonSerializer.Serialize(currentUser);
+                string jsonLine = jsonString + Environment.NewLine; // adds /r/n on end
+                File.AppendAllText("user_data.json", jsonLine);
+
+                userDashboard(currentUser);
+            }
+            else
+            {
+                ClearConsole();
+                DisplayTitleAnimation();
+                Console.WriteLine($"\n{userCheck}");
+                Console.WriteLine("Restarting Account creation process, press enter....");
+                Console.ReadLine();
+
+                Main(new string[] { });
+            }
         }
 
         /// <summary>
@@ -243,7 +368,6 @@ namespace TermiTime
 
         /// <summary>
         /// Displays the static ASCII title without animation
-        /// Not used rn
         /// </summary>
         /// 
 

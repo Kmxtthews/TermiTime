@@ -28,5 +28,10 @@ namespace Main
             Console.WriteLine("Press Enter to try again...");
             Console.ReadLine();
         }
+
+        public static class Globals
+        {
+            public static Users CachedUser;
+        }
     }
 }
