@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Numerics;
 using System.Text.Json;
 using System.Threading;
 using System.Xml;
@@ -51,10 +52,7 @@ namespace TermiTime
                 }
                 else if (input == "n" || input == "no")
                 {
-                    unanswered = false;
-                    Console.WriteLine("\nWelcome back! (Returning user logic not yet implemented)");
-                    Console.WriteLine("Press Enter to exit...");
-                    Console.ReadLine();
+                    HandleReturningUser();
                 }
                 else
                 {
@@ -66,27 +64,76 @@ namespace TermiTime
             }
         }
 
+
+        /// <summary>
+        /// Displays user dashboard according to credentials
+        /// </summary>
+        private static void userDashboard(Users user)
+        {
+            ClearConsole();
+            DisplayTitleAnimation();
+            Console.WriteLine(user.GetCredentials());
+        }
+
+
+        /// <summary>
+        /// Allows returning users to log in
+        /// </summary>
+        private static void HandleReturningUser()
+        {
+            ClearConsole();
+            DisplayTitleAnimation();
+            Console.WriteLine("\nWelcome back!\nPlease enter your username...");
+            Console.Write("Username :");
+
+            string? username = Console.ReadLine();
+
+            Console.WriteLine("\nNow enter your password!");
+            Console.Write("Password :");
+
+            string? password = Console.ReadLine();
+
+            // Query saved user data
+            // To be continued...
+        }
+
+        /// <summary>
+        /// Checks registered users for matching credentials
+        /// </summary>
+        private static string CheckForExistingUser(string? username, string? password)
+        {
+            // Check if input is not null
+            if ((username is not null) && (password is not null))
+            {
+                return "test";
+            } 
+            else
+            {
+                return "Username or password was null.";
+            }
+        }
+
         /// <summary>
         /// Handles the new user registration flow
         /// </summary>
         private static void HandleNewUser()
         {
-            string username = PromptValidUsername();
-            string password = PromptValidPassword();
+            string? username = PromptValidUsername();
+            string? password = PromptValidPassword();
 
             ClearConsole();
             DisplayTitleAnimation();
-            Console.WriteLine("\nAccount created successfully!");
-            Console.WriteLine($"Welcome, {username}!");
-            Console.WriteLine("Logging you in now...");
-            Console.WriteLine("\nPress Enter to continue...");
+            Console.WriteLine($"\nAccount created successfully!\nWelcome, {username}!\nLogging you in now...\nPress Enter to continue...");
             Console.ReadLine();
 
-            // Create user object (assuming Users class exists in Helper or another file)
-            var newUser = new Users(username, password);
+            //CheckForExistingUser(username, password);
 
-            // TODO: Save user to file/database (JSON, XML, SQLite, etc.)
-            // SaveUserToFile(newUser);
+            var currentUser = new Users(username, password);
+            var options = new JsonSerializerOptions { WriteIndented = true };
+            string jsonString = JsonSerializer.Serialize(currentUser, options);
+            File.WriteAllText("user_data.json", jsonString);
+            Console.WriteLine("Done test%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%");
+            //userDashboard(currentUser);
         }
 
         /// <summary>
