@@ -31,7 +31,13 @@ namespace Main
 
         public static class Globals
         {
-            public static Users CachedUser;
+            public static Users? CachedUser { get; set; }
+        }
+
+        public class Entry
+        {
+            public string Title { get; set; } = string.Empty;
+            public string Content { get; set; } = string.Empty;
         }
     }
 }

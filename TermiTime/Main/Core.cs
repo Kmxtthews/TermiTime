@@ -1,12 +1,15 @@
 ﻿using Main;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Numerics;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Threading;
 using System.Xml;
+using System.Xml.Linq;
+using static Main.Helper;
 
 namespace TermiTime
 {
@@ -21,6 +24,16 @@ namespace TermiTime
         // Controls whether the title animation has a delay (useful for debugging)
         private static bool SkipLoadTime { get; set; } = true;
 
+        private static void Cleanup()
+        {
+            // Check if a user has been cached this session
+            if (Helper.Globals.CachedUser is not null)
+            {
+                // A user is cached
+                //
+            }
+        }
+
         /// <summary>
         /// Entry point of the application
         /// </summary>
@@ -31,6 +44,16 @@ namespace TermiTime
             Console.SetWindowSize(96, 30);          // Exact width your art needs
             Console.SetBufferSize(96, 30);          // Removes scrollbars
             Console.CursorVisible = false;          // Optional: hides blinking cursor
+
+            Console.CancelKeyPress += (sender, e) =>
+            {
+                Console.WriteLine("\nCleanup running before exit...");
+
+                // Cleanup code
+                Cleanup();
+                e.Cancel = true;
+                Environment.Exit(0);
+            };
 
             Console.Title = "TermiTime";
             ConfigureConsole();
@@ -68,13 +91,69 @@ namespace TermiTime
         /// <summary>
         /// Where I associate entries written by users to their list<string> entry field
         /// <summary>
-        private static void SaveEntry(string content)
+        private static void SaveEntry(string title, string content)
         {
-            File.AppendAllText("entries.txt", content + Environment.NewLine);
+            string[] lines = File.ReadAllLines("user_data.json");
+            Users OurUser = Helper.Globals.CachedUser!;
+            bool found = false;
 
-            // Add entry to user's entry field
-            Users OurUser = Helper.Globals.CachedUser;
-            OurUser.Entries.Add(content);
+            for (int i = 0; i < lines.Length; i++)
+            {
+                string trimmedLine = lines[i].Trim();
+                if (string.IsNullOrEmpty(trimmedLine)) continue;
+
+                try
+                {
+                    // Parse the current line as a JSON object
+                    JsonDocument doc = JsonDocument.Parse(trimmedLine);
+                    JsonElement root = doc.RootElement;
+
+                    string username = root.GetProperty("Username").GetString();  // Adjust property names to match your JSON
+                    string password = root.GetProperty("Password").GetString();
+
+
+
+                    if (username == OurUser.Username && password == OurUser.Password)
+                    {
+                        Users fileUser = JsonSerializer.Deserialize<Users>(root.GetRawText());
+
+                        // Add the new entry to the in-memory user object
+                        fileUser.Entries.Add(new Entry { Title = title, Content = content });
+
+                        // Serialize the UPDATED OurUser object back to a single line JSON string
+                        string updatedJson = JsonSerializer.Serialize(fileUser, new JsonSerializerOptions { WriteIndented = false });
+
+                        // Replace the old line with the new serialized version
+                        lines[i] = updatedJson;
+                        found = true;
+
+                        Helper.Globals.CachedUser = fileUser;
+                        break;
+                    }
+                }
+                catch (JsonException)
+                {
+                    // Skip invalid JSON lines
+                    Debug.WriteLine("Invalid JSON encountered, skipping line.");
+                    continue;
+                }
+            }
+
+            if (found)
+            {
+                // Write all lines back to the file
+                File.WriteAllLines("user_data.json", lines);
+            }
+            else
+            {
+                ClearConsole();
+
+                Helper.Globals.CachedUser = null; // Log out user
+                Console.WriteLine("An error occured\nUser data couldn't be accessed\nEntry deleted, logging user out.\nPress Enter...");
+                Console.ReadLine();
+                Main(new string[] { }); // Restart app
+            }
+
         }
 
 
@@ -90,15 +169,40 @@ namespace TermiTime
             Console.Write("\nEntry: ");
             string? entryContent = Console.ReadLine()?.Trim();
 
-            Console.WriteLine("\nEntry saved! Press Enter to return to dashboard...");
+            Console.WriteLine("\nNow please enter a title for this entry...");
+            Console.Write("\nTitle: ");
+            string? entryTitle = Console.ReadLine()?.Trim();
+
+            Console.WriteLine("\nEntry saved! Press enter to return to the dashboard...");
             Console.ReadLine();
 
-            SaveEntry(entryContent);
+            SaveEntry(entryTitle, entryContent);
 
             // Return to dashboard using cached user object
-            userDashboard(Helper.Globals.CachedUser);
 
+            try
+            {
+                userDashboard(Helper.Globals.CachedUser);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"An error occurred: {ex.Message}");
+                Console.WriteLine("You have been logged out.\nEntry was not saved.\nPress Enter...");
+                Console.ReadLine();
+                Main(new string[] { });
+            }
         }
+
+        private static void viewEntrys()
+        {
+            ClearConsole();
+        }
+
+        private static void viewProfile()
+        {
+            ClearConsole();
+        }
+
 
 
         /// <summary>
@@ -126,10 +230,16 @@ namespace TermiTime
                         CreateEntry();
                         break;
                     case "2":
-                        // View Entrys
+                        viewEntrys();
                         break;
                     case "3":
-                        // View Profile
+                        viewProfile();
+                        break;
+                    default:
+                        Console.WriteLine("\nEnsure your input is valid in this context...\nPress enter if you understand...");
+                        Console.ReadLine();
+                        ClearConsole();
+                        DisplayTitleAnimation();
                         break;
                 }
             }

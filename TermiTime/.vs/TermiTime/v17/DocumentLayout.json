@@ -11,12 +11,16 @@
       "RelativeMoniker": "D:0:0:{B7F4DF9D-6935-44A4-8BB8-C94A25F0859F}|Main\\Main.csproj|solutionrelative:main\\consolehelper.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{B7F4DF9D-6935-44A4-8BB8-C94A25F0859F}|Main\\Main.csproj|c:\\users\\kadem\\source\\repos\\individual\\termitime\\termitime\\main\\users.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{B7F4DF9D-6935-44A4-8BB8-C94A25F0859F}|Main\\Main.csproj|solutionrelative:main\\users.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\kadem\\source\\repos\\Individual\\TermiTime\\TermiTime\\Main\\bin\\Debug\\net8.0\\user_data.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:Main\\bin\\Debug\\net8.0\\user_data.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{B7F4DF9D-6935-44A4-8BB8-C94A25F0859F}|Main\\Main.csproj|c:\\users\\kadem\\source\\repos\\individual\\termitime\\termitime\\main\\helper.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{B7F4DF9D-6935-44A4-8BB8-C94A25F0859F}|Main\\Main.csproj|solutionrelative:main\\helper.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{B7F4DF9D-6935-44A4-8BB8-C94A25F0859F}|Main\\Main.csproj|c:\\users\\kadem\\source\\repos\\individual\\termitime\\termitime\\main\\users.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{B7F4DF9D-6935-44A4-8BB8-C94A25F0859F}|Main\\Main.csproj|solutionrelative:main\\users.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     }
   ],
   "DocumentGroupContainers": [
@@ -40,35 +44,9 @@
               "RelativeDocumentMoniker": "Main\\Core.cs",
               "ToolTip": "C:\\Users\\kadem\\source\\repos\\Individual\\TermiTime\\TermiTime\\Main\\Core.cs",
               "RelativeToolTip": "Main\\Core.cs",
-              "ViewState": "AgIAAAkAAAAAAAAAAAAAACkAAAAAAAAAAAAAAA==",
+              "ViewState": "AgIAANQAAAAAAAAAAEBAwPwAAAAJAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-11-30T03:29:02.51Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 2,
-              "Title": "Users.cs",
-              "DocumentMoniker": "C:\\Users\\kadem\\source\\repos\\Individual\\TermiTime\\TermiTime\\Main\\Users.cs",
-              "RelativeDocumentMoniker": "Main\\Users.cs",
-              "ToolTip": "C:\\Users\\kadem\\source\\repos\\Individual\\TermiTime\\TermiTime\\Main\\Users.cs",
-              "RelativeToolTip": "Main\\Users.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA8AAAAxAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-11-30T03:29:05.136Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 1,
-              "Title": "ConsoleHelper.cs",
-              "DocumentMoniker": "C:\\Users\\kadem\\source\\repos\\Individual\\TermiTime\\TermiTime\\Main\\ConsoleHelper.cs",
-              "RelativeDocumentMoniker": "Main\\ConsoleHelper.cs",
-              "ToolTip": "C:\\Users\\kadem\\source\\repos\\Individual\\TermiTime\\TermiTime\\Main\\ConsoleHelper.cs",
-              "RelativeToolTip": "Main\\ConsoleHelper.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAMAAAA4AAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-11-30T03:44:50.933Z",
+              "WhenOpened": "2025-12-04T14:15:39.223Z",
               "EditorCaption": ""
             },
             {
@@ -79,9 +57,48 @@
               "RelativeDocumentMoniker": "Main\\Helper.cs",
               "ToolTip": "C:\\Users\\kadem\\source\\repos\\Individual\\TermiTime\\TermiTime\\Main\\Helper.cs",
               "RelativeToolTip": "Main\\Helper.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAACEAAAArAAAAAAAAAA==",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAACMAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-11-30T03:40:51.847Z",
+              "WhenOpened": "2025-12-04T13:55:41.918Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
+              "Title": "Users.cs",
+              "DocumentMoniker": "C:\\Users\\kadem\\source\\repos\\Individual\\TermiTime\\TermiTime\\Main\\Users.cs",
+              "RelativeDocumentMoniker": "Main\\Users.cs",
+              "ToolTip": "C:\\Users\\kadem\\source\\repos\\Individual\\TermiTime\\TermiTime\\Main\\Users.cs",
+              "RelativeToolTip": "Main\\Users.cs",
+              "ViewState": "AgIAAAQAAAAAAAAAAAAAABAAAABFAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-12-04T13:55:42.415Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "ConsoleHelper.cs",
+              "DocumentMoniker": "C:\\Users\\kadem\\source\\repos\\Individual\\TermiTime\\TermiTime\\Main\\ConsoleHelper.cs",
+              "RelativeDocumentMoniker": "Main\\ConsoleHelper.cs",
+              "ToolTip": "C:\\Users\\kadem\\source\\repos\\Individual\\TermiTime\\TermiTime\\Main\\ConsoleHelper.cs",
+              "RelativeToolTip": "Main\\ConsoleHelper.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAwAAABKAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-12-04T13:55:44.795Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "user_data.json",
+              "DocumentMoniker": "C:\\Users\\kadem\\source\\repos\\Individual\\TermiTime\\TermiTime\\Main\\bin\\Debug\\net8.0\\user_data.json",
+              "RelativeDocumentMoniker": "Main\\bin\\Debug\\net8.0\\user_data.json",
+              "ToolTip": "C:\\Users\\kadem\\source\\repos\\Individual\\TermiTime\\TermiTime\\Main\\bin\\Debug\\net8.0\\user_data.json",
+              "RelativeToolTip": "Main\\bin\\Debug\\net8.0\\user_data.json",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAEAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
+              "WhenOpened": "2025-12-04T13:56:34.165Z",
               "EditorCaption": ""
             }
           ]
