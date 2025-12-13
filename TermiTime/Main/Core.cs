@@ -4,6 +4,9 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Numerics;
+using System.Reflection;
+using System.Runtime.ConstrainedExecution;
+using System.Runtime.InteropServices;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Threading;
@@ -40,10 +43,14 @@ namespace TermiTime
         static void Main(string[] args)
         {
 
-            ConsoleHelper.DisableResizing();        // ← Locks resizing completely
-            Console.SetWindowSize(96, 30);          // Exact width your art needs
-            Console.SetBufferSize(96, 30);          // Removes scrollbars
-            Console.CursorVisible = false;          // Optional: hides blinking cursor
+            // Minimize then resize to avoid scrollbars and ensure proper layout
+            if (OperatingSystem.IsWindows())
+            {
+                ConsoleHelper.DisableResizing();        // ← Locks resizing completely
+                Console.SetWindowSize(96, 30);          // Exact width your art needs
+                Console.SetBufferSize(96, 30);          // Removes scrollbars
+                Console.CursorVisible = false;          // Optional: hides blinking cursor
+            }
 
             Console.CancelKeyPress += (sender, e) =>
             {
@@ -91,7 +98,7 @@ namespace TermiTime
         /// <summary>
         /// Where I associate entries written by users to their list<string> entry field
         /// <summary>
-        private static void SaveEntry(string title, string content)
+        private static void SaveEntry(string title, string content, bool editing, int passedInput)
         {
             string[] lines = File.ReadAllLines("user_data.json");
             Users OurUser = Helper.Globals.CachedUser!;
@@ -108,17 +115,29 @@ namespace TermiTime
                     JsonDocument doc = JsonDocument.Parse(trimmedLine);
                     JsonElement root = doc.RootElement;
 
-                    string username = root.GetProperty("Username").GetString();  // Adjust property names to match your JSON
-                    string password = root.GetProperty("Password").GetString();
+                    string? username = root.GetProperty("Username").GetString();  // Adjust property names to match your JSON
+                    string? password = root.GetProperty("Password").GetString();
 
 
 
                     if (username == OurUser.Username && password == OurUser.Password)
                     {
-                        Users fileUser = JsonSerializer.Deserialize<Users>(root.GetRawText());
+                        Users? fileUser = JsonSerializer.Deserialize<Users>(root.GetRawText());
 
                         // Add the new entry to the in-memory user object
-                        fileUser.Entries.Add(new Entry { Title = title, Content = content });
+
+                        if (editing)
+                        {
+                            if (fileUser != null && passedInput >= 0 && passedInput < fileUser.Entries.Count)
+                            {
+                                fileUser.Entries[passedInput].Title = title;
+                                fileUser.Entries[passedInput].Content = content;
+                            }
+                        }
+                        else
+                        {
+                            fileUser?.Entries.Add(new Entry { Title = title, Content = content });
+                        }
 
                         // Serialize the UPDATED OurUser object back to a single line JSON string
                         string updatedJson = JsonSerializer.Serialize(fileUser, new JsonSerializerOptions { WriteIndented = false });
@@ -157,10 +176,12 @@ namespace TermiTime
         }
 
 
+
+
         /// <summary>
         /// Where users create new entries
         /// <summary>
-        private static void CreateEntry()
+        private static void CreateEntry(bool editing, int passedInput)
         {
             ClearConsole();
             DisplayTitleAnimation();
@@ -173,13 +194,18 @@ namespace TermiTime
             Console.Write("\nTitle: ");
             string? entryTitle = Console.ReadLine()?.Trim();
 
-            Console.WriteLine("\nEntry saved! Press enter to return to the dashboard...");
-            Console.ReadLine();
-
-            SaveEntry(entryTitle, entryContent);
+            if (editing)
+            {
+                SaveEntry(entryTitle!, entryContent!, true, passedInput);
+            }
+            else
+            {
+                Console.WriteLine("\nEntry saved! Press enter to return to the dashboard...");
+                Console.ReadLine();
+                SaveEntry(entryTitle!, entryContent!, false, -1);
+            }
 
             // Return to dashboard using cached user object
-
             try
             {
                 userDashboard(Helper.Globals.CachedUser);
@@ -189,13 +215,87 @@ namespace TermiTime
                 Console.WriteLine($"An error occurred: {ex.Message}");
                 Console.WriteLine("You have been logged out.\nEntry was not saved.\nPress Enter...");
                 Console.ReadLine();
+                Helper.Globals.CachedUser = null;
                 Main(new string[] { });
             }
+        }
+
+        private static void displayEntry(string title, string content, bool skip, int passedInput)
+        {
+            ClearConsole();
+            DisplayTitleAnimation();
+
+            Console.WriteLine($"Title: {title}");
+
+            foreach (char c in content)
+            {
+                Console.Write(c);
+                if (!skip)
+                    Thread.Sleep(1);
+            }
+
+            Console.WriteLine("\n\n1. Edit entry\n2. Delete entry\n3. Next entry");
+
+            string? input = Console.ReadLine();
+
+            switch (input)
+            {
+                case "1":
+                    // Edit entry logic here
+                    Console.WriteLine("\nEdit");
+                    CreateEntry(true, passedInput);
+                    break;
+                case "2":
+                    // Delete entry logic here
+                    Console.WriteLine("\nDelete");
+                    break;
+                case "3":
+                    // Next entry logic here
+                    Console.WriteLine("\nNext");
+                    break;
+                default:
+                    Console.WriteLine("\nEnsure your input is valid in this context...\nPress enter if you understand...");
+                    Console.ReadLine();
+                    ClearConsole();
+                    displayEntry(title, content, true, passedInput);
+                    break;
+            }
+
         }
 
         private static void viewEntrys()
         {
             ClearConsole();
+            DisplayTitleAnimation();
+
+            bool unanswered = true;
+            Users cUser = Helper.Globals.CachedUser!;
+            Console.WriteLine($"Welcome {cUser.Username}!\nEnter a number corresponding with the entry you want to view.");
+            // where list generates
+
+            for (int i = 0; i < cUser.Entries.Count; i++)
+            {
+                Console.WriteLine($"\n{i + 1}. {cUser.Entries[i].Title} ");
+            }
+
+            //Console.WriteLine("\nYou have no entries yet! Press enter to return to the dashboard...");
+            //Console.ReadLine();
+            //userDashboard(cUser);
+
+            Console.Write("Entry : ");
+            string input = Console.ReadLine()!.Trim();
+
+            try
+            {
+                int trueInput = int.Parse(input) - 1;
+                displayEntry(cUser.Entries[trueInput].Title, cUser.Entries[trueInput].Content, false, trueInput);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine($"\nPlease ensure input is valid, press enter if understood.");
+                Console.ReadLine();
+                viewEntrys();
+            }
         }
 
         private static void viewProfile()
@@ -227,7 +327,7 @@ namespace TermiTime
                 switch (input)
                 {
                     case "1":
-                        CreateEntry();
+                        CreateEntry(false, -1);
                         break;
                     case "2":
                         viewEntrys();
@@ -244,8 +344,6 @@ namespace TermiTime
                 }
             }
         }
-
-
         /// <summary>
         /// Allows returning users to log in
         /// </summary>
@@ -447,9 +545,13 @@ namespace TermiTime
             try
             {
                 // Minimize then resize to avoid scrollbars and ensure proper layout
-                Console.SetWindowSize(1, 1);
-                Console.SetBufferSize(TitleSize.width, 35); // Windows only
-                Console.SetWindowSize(TitleSize.width, 35);
+                if (OperatingSystem.IsWindows())
+                {
+                    Console.SetWindowSize(1, 1);
+                    Console.SetBufferSize(TitleSize.width, 35); // Windows only
+                    Console.SetWindowSize(TitleSize.width, 35);
+                }
+
             }
             catch (ArgumentOutOfRangeException)
             {
