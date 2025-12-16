@@ -70,6 +70,8 @@ namespace TermiTime
             Console.WriteLine();
             Console.WriteLine("Welcome to TermiTime!\nAre you new here? (y/n)");
 
+
+            //wasdwasd
             bool unanswered = true;
             int invalidAttempts = 0;
 
@@ -98,7 +100,7 @@ namespace TermiTime
         /// <summary>
         /// Where I associate entries written by users to their list<string> entry field
         /// <summary>
-        private static void SaveEntry(string title, string content, bool editing, int passedInput)
+        private static void Entry(string title, string content, string option, int passedInput)
         {
             string[] lines = File.ReadAllLines("user_data.json");
             Users OurUser = Helper.Globals.CachedUser!;
@@ -126,13 +128,19 @@ namespace TermiTime
 
                         // Add the new entry to the in-memory user object
 
-                        if (editing)
+                        if (option == "editing")
                         {
                             if (fileUser != null && passedInput >= 0 && passedInput < fileUser.Entries.Count)
                             {
                                 fileUser.Entries[passedInput].Title = title;
                                 fileUser.Entries[passedInput].Content = content;
                             }
+                        }
+                        else if (option == "delete")
+                        {
+                            fileUser?.Entries.RemoveAt(passedInput);
+                            ClearConsole();
+                            DisplayTitleAnimation();
                         }
                         else
                         {
@@ -175,7 +183,104 @@ namespace TermiTime
 
         }
 
+        private static void ChangeTheme()
+        {
+            ClearConsole();
+            DisplayTitleAnimation();
 
+            Users? cUser = Helper.Globals.CachedUser!;
+            Console.WriteLine($"Current selection:\n    Background: {cUser.UserTheme?.BackgroundColor}\n    Foreground: {cUser.UserTheme?.ForegroundColor}\n\nSelect a terminal theme:\n\n1 •Dark Theme (\"Default\")\n2 •Light Theme\n3 •Solarized Theme\n4 •Midnight Theme\n5 •Return");
+            string? input = Console.ReadLine()?.Trim();
+            bool changed = false;
+
+            switch (input)
+            {
+                case "1":
+                    cUser.UserTheme!.BackgroundColor = ConsoleColor.Black;
+                    cUser.UserTheme!.ForegroundColor = ConsoleColor.White;
+                    cUser.UserTheme!.ApplyTheme();
+                    changed = true;
+                    break;
+                case "2":
+                    cUser.UserTheme!.BackgroundColor = ConsoleColor.White;
+                    cUser.UserTheme!.ForegroundColor = ConsoleColor.Black;
+                    cUser.UserTheme!.ApplyTheme();
+                    changed = true;
+                    break;
+                case "3":
+                    cUser.UserTheme!.BackgroundColor = ConsoleColor.DarkYellow;
+                    cUser.UserTheme!.ForegroundColor = ConsoleColor.White;
+                    cUser.UserTheme!.ApplyTheme();
+                    changed = true;
+                    break;
+                case "4":
+                    cUser.UserTheme!.BackgroundColor = ConsoleColor.DarkMagenta;
+                    cUser.UserTheme!.ForegroundColor = ConsoleColor.Yellow;
+                    cUser.UserTheme!.ApplyTheme();
+                    changed = true;
+                    break;
+                case "5":
+                        getProfile(true);
+                    break;
+                default:
+                    Console.WriteLine("\nEnsure your input is valid in this context...\nPress enter if you understand...");
+                    Console.ReadLine();
+                    ChangeTheme();
+                    break;
+            }
+
+            if (changed)
+            {
+                cUser.UserTheme!.ApplyTheme();
+                Helper.SaveUserToFile(cUser);
+
+                Console.WriteLine("\nTheme applied and saved! Press enter to return to profile...");
+                Console.ReadLine();
+                getProfile(true);
+            }
+        }
+
+        private static void getProfile(bool useCached)
+        {
+
+            ClearConsole();
+            DisplayTitleAnimation();
+            if (useCached)
+            {
+                Users cUser = Helper.Globals.CachedUser!;
+
+                string? username = cUser.Username;
+                string? password = cUser.Password;
+                DateTime creationDate = cUser.CreationDate;
+                int entryCount = cUser.Entries.Count;
+
+                Console.WriteLine($"\nProfile Information:\n\nUsername: {username}\nPassword: {password}\nAccount Created: {creationDate}\nTotal Entries: {entryCount}");
+                Console.WriteLine("\n1 •Change terminal theme\n2 •View Entries\n3 •Return");
+
+                string? input = Console.ReadLine()?.Trim();
+
+                switch (input)
+                {
+                    case "1":
+                        ChangeTheme();
+                        break;
+                    case "2":
+                        viewEntrys(false, 0);
+                        break;
+                    case "3":
+                        ClearConsole();
+                        DisplayTitleAnimation();
+                        return;
+                    default:
+                        Console.WriteLine("\nEnsure your input is valid in this context...\nPress enter if you understand...");
+                        Console.ReadLine();
+                        getProfile(true);
+                        break;
+                }
+
+                return;
+            }
+        }
 
 
         /// <summary>
@@ -186,23 +291,37 @@ namespace TermiTime
             ClearConsole();
             DisplayTitleAnimation();
 
-            Console.WriteLine("\nThis is an entry, please type below.");
-            Console.Write("\nEntry: ");
-            string? entryContent = Console.ReadLine()?.Trim();
-
-            Console.WriteLine("\nNow please enter a title for this entry...");
+            Console.WriteLine("\nPlease enter a title for this entry...");
             Console.Write("\nTitle: ");
             string? entryTitle = Console.ReadLine()?.Trim();
 
+            if (string.IsNullOrEmpty(entryTitle))
+            {
+                Console.WriteLine("\nTitle cannot be empty! Press enter to try again...");
+                Console.ReadLine();
+                return;
+            }
+
+            Console.WriteLine("\nThis is the entry, please type below.");
+            Console.Write("\nEntry: ");
+            string? entryContent = Console.ReadLine()?.Trim();
+
+            if (string.IsNullOrEmpty(entryContent))
+            {
+                Console.WriteLine("\nContent cannot be empty! Press enter to try again...");
+                Console.ReadLine();
+                return;
+            }
+
             if (editing)
             {
-                SaveEntry(entryTitle!, entryContent!, true, passedInput);
+                Entry(entryTitle!, entryContent!, "editing", passedInput);
             }
             else
             {
                 Console.WriteLine("\nEntry saved! Press enter to return to the dashboard...");
                 Console.ReadLine();
-                SaveEntry(entryTitle!, entryContent!, false, -1);
+                Entry(entryTitle!, entryContent!, "save", -1);
             }
 
             // Return to dashboard using cached user object
@@ -241,17 +360,13 @@ namespace TermiTime
             switch (input)
             {
                 case "1":
-                    // Edit entry logic here
-                    Console.WriteLine("\nEdit");
                     CreateEntry(true, passedInput);
                     break;
                 case "2":
-                    // Delete entry logic here
-                    Console.WriteLine("\nDelete");
+                    Entry(title, content, "delete", passedInput);
                     break;
                 case "3":
-                    // Next entry logic here
-                    Console.WriteLine("\nNext");
+                    viewEntrys(true, passedInput);
                     break;
                 default:
                     Console.WriteLine("\nEnsure your input is valid in this context...\nPress enter if you understand...");
@@ -263,53 +378,77 @@ namespace TermiTime
 
         }
 
-        private static void viewEntrys()
+        private static void viewEntrys(bool nextEntry, int passedInput)
         {
-            ClearConsole();
-            DisplayTitleAnimation();
-
-            bool unanswered = true;
             Users cUser = Helper.Globals.CachedUser!;
-            Console.WriteLine($"Welcome {cUser.Username}!\nEnter a number corresponding with the entry you want to view.");
-            // where list generates
 
-            for (int i = 0; i < cUser.Entries.Count; i++)
+            if (nextEntry)
             {
-                Console.WriteLine($"\n{i + 1}. {cUser.Entries[i].Title} ");
+                try
+                {
+                    int newInput = passedInput + 1;
+                    displayEntry(cUser.Entries[newInput].Title, cUser.Entries[newInput].Content, false, newInput);
+                    Debug.WriteLine("WORKEDDDDDD");
+                }
+                catch
+                {
+                    Console.WriteLine($"\nOut of range!, Press enter if understood.");
+                    Console.ReadLine();
+                    viewEntrys(false, 0);
+                }
+            }
+            else
+            {
+                ClearConsole();
+                DisplayTitleAnimation();
+
+                
+                Console.WriteLine($"Welcome {cUser.Username}!\nEnter a number corresponding with the entry you want to view.");
+                // where list generates
+
+                if (cUser.Entries.Count <= 0)
+                {
+                    Console.WriteLine("\nYou have no entries yet! Press enter to return to the dashboard...");
+                    Console.ReadLine();
+                    userDashboard(cUser);
+                }
+                else
+                {
+                    for (int i = 0; i < cUser.Entries.Count; i++)
+                    {
+                        Console.WriteLine($"{i + 1}. {cUser.Entries[i].Title} ");
+                    }
+                }
+
+                //Console.WriteLine("\nYou have no entries yet! Press enter to return to the dashboard...");
+                //Console.ReadLine();
+                //userDashboard(cUser);
+
+                Console.Write("\nEntry : ");
+                string input = Console.ReadLine()!.Trim();
+
+                try
+                {
+                    int trueInput = int.Parse(input) - 1;
+                    displayEntry(cUser.Entries[trueInput].Title, cUser.Entries[trueInput].Content, false, trueInput);
+                }
+                catch
+                {
+                    Console.WriteLine($"\nPlease ensure input is valid, press enter if understood.");
+                    Console.ReadLine();
+                    viewEntrys(false, 0);
+                }
             }
 
-            //Console.WriteLine("\nYou have no entries yet! Press enter to return to the dashboard...");
-            //Console.ReadLine();
-            //userDashboard(cUser);
 
-            Console.Write("Entry : ");
-            string input = Console.ReadLine()!.Trim();
-
-            try
-            {
-                int trueInput = int.Parse(input) - 1;
-                displayEntry(cUser.Entries[trueInput].Title, cUser.Entries[trueInput].Content, false, trueInput);
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine($"\nPlease ensure input is valid, press enter if understood.");
-                Console.ReadLine();
-                viewEntrys();
-            }
         }
-
-        private static void viewProfile()
-        {
-            ClearConsole();
-        }
-
-
 
         /// <summary>
         /// Displays user dashboard according to credentials
         /// </summary>
         private static void userDashboard(Users? user)
         {
+            user?.UserTheme?.ApplyTheme();
             ClearConsole();
             DisplayTitleAnimation();
 
@@ -330,10 +469,10 @@ namespace TermiTime
                         CreateEntry(false, -1);
                         break;
                     case "2":
-                        viewEntrys();
+                        viewEntrys(false, 0);
                         break;
                     case "3":
-                        viewProfile();
+                        getProfile(true);
                         break;
                     default:
                         Console.WriteLine("\nEnsure your input is valid in this context...\nPress enter if you understand...");
@@ -352,14 +491,31 @@ namespace TermiTime
             ClearConsole();
             DisplayTitleAnimation();
             Console.WriteLine("\nWelcome back!\nPlease enter your username...");
+            Console.WriteLine("\nEnter x to start again.");
             Console.Write("Username :");
 
             string? username = Console.ReadLine()?.Trim();
 
+            if (username == "x")
+            {
+                Console.WriteLine("Starting again! Press enter to continue.");
+                Console.ReadLine();
+                Main(new string[] { });
+            }
+
             Console.WriteLine("\nNow enter your password!");
+            Console.WriteLine("\nEnter x to start again.");
             Console.Write("Password :");
 
             string? password = Console.ReadLine()?.Trim();
+
+            if (password == "x")
+            {
+                Console.WriteLine("Starting again! Press enter to continue.");
+                Console.ReadLine();
+                Main(new string[] { });
+            }
+
             string userCheck = CheckForExistingUser(username);
 
             if (userCheck == "User already exists, account creation declined.")
@@ -395,6 +551,12 @@ namespace TermiTime
                 }
 
                 Console.WriteLine("\nIncorrect password or username. Restarting login process, press enter....");
+                Console.ReadLine();
+                Main(new string[] { });
+            }
+            else if (userCheck == "User not found.")
+            {
+                Console.WriteLine("User could not be found in database. Press enter if understood.");
                 Console.ReadLine();
                 Main(new string[] { });
             }
@@ -483,9 +645,17 @@ namespace TermiTime
                 Console.WriteLine(" • Must be longer than 3 characters");
                 Console.WriteLine(" • Must contain at least one uppercase letter");
                 Console.WriteLine(" • No special characters allowed");
+                Console.WriteLine("\n\nEnter x to start again.");
                 Console.Write("\nUsername: ");
 
                 string? username = Console.ReadLine()?.Trim();
+
+                if (username == "x")
+                {
+                    Console.WriteLine("Starting again! Press enter to continue.");
+                    Console.ReadLine(); 
+                    Main(new string[] { }); 
+                }
 
                 if (string.IsNullOrEmpty(username))
                 {
@@ -519,6 +689,14 @@ namespace TermiTime
                 Console.Write("\nPassword: ");
 
                 string? password = Console.ReadLine()?.Trim();
+
+
+                if (password == "x")
+                {
+                    Console.WriteLine("Starting again! Press enter to continue.");
+                    Console.ReadLine();
+                    Main(new string[] { });
+                }
 
                 if (string.IsNullOrEmpty(password))
                 {

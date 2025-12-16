@@ -13,6 +13,7 @@ namespace Main
     {
         public string? Username { get; set; }
         public string? Password { get; set; }
+        public Theme? UserTheme { get; set; } = new Theme();
         public  DateTime CreationDate { get; set; }
         public List<Entry> Entries { get; set; } = new List<Entry>();
 
