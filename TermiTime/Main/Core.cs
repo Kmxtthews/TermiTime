@@ -116,11 +116,8 @@ namespace TermiTime
                     // Parse the current line as a JSON object
                     JsonDocument doc = JsonDocument.Parse(trimmedLine);
                     JsonElement root = doc.RootElement;
-
                     string? username = root.GetProperty("Username").GetString();  // Adjust property names to match your JSON
                     string? password = root.GetProperty("Password").GetString();
-
-
 
                     if (username == OurUser.Username && password == OurUser.Password)
                     {
@@ -245,41 +242,38 @@ namespace TermiTime
 
             ClearConsole();
             DisplayTitleAnimation();
-            if (useCached)
+            Users cUser = Helper.Globals.CachedUser!;
+
+            string? username = cUser.Username;
+            string? password = cUser.Password;
+            DateTime creationDate = cUser.CreationDate;
+            int entryCount = cUser.Entries.Count;
+
+            Console.WriteLine($"\nProfile Information:\n\nUsername: {username}\nPassword: {password}\nAccount Created: {creationDate}\nTotal Entries: {entryCount}");
+            Console.WriteLine("\n1 •Change terminal theme\n2 •View Entries\n3 •Return");
+
+            string? input = Console.ReadLine()?.Trim();
+
+            switch (input)
             {
-                Users cUser = Helper.Globals.CachedUser!;
-
-                string? username = cUser.Username;
-                string? password = cUser.Password;
-                DateTime creationDate = cUser.CreationDate;
-                int entryCount = cUser.Entries.Count;
-
-                Console.WriteLine($"\nProfile Information:\n\nUsername: {username}\nPassword: {password}\nAccount Created: {creationDate}\nTotal Entries: {entryCount}");
-                Console.WriteLine("\n1 •Change terminal theme\n2 •View Entries\n3 •Return");
-
-                string? input = Console.ReadLine()?.Trim();
-
-                switch (input)
-                {
-                    case "1":
-                        ChangeTheme();
-                        break;
-                    case "2":
-                        viewEntrys(false, 0);
-                        break;
-                    case "3":
-                        ClearConsole();
-                        DisplayTitleAnimation();
-                        return;
-                    default:
-                        Console.WriteLine("\nEnsure your input is valid in this context...\nPress enter if you understand...");
-                        Console.ReadLine();
-                        getProfile(true);
-                        break;
-                }
-
-                return;
+                case "1":
+                    ChangeTheme();
+                    break;
+                case "2":
+                    viewEntrys(false, 0);
+                    break;
+                case "3":
+                    ClearConsole();
+                    DisplayTitleAnimation();
+                    return;
+                default:
+                    Console.WriteLine("\nEnsure your input is valid in this context...\nPress enter if you understand...");
+                    Console.ReadLine();
+                    getProfile(true);
+                    break;
             }
+
+            return;
         }
 
 
@@ -375,7 +369,6 @@ namespace TermiTime
                     displayEntry(title, content, true, passedInput);
                     break;
             }
-
         }
 
         private static void viewEntrys(bool nextEntry, int passedInput)
